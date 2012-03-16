@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.achartengine.chart.LabelDrawer;
 import org.achartengine.util.MathHelper;
 
 import android.graphics.Color;
@@ -97,6 +98,10 @@ public class XYMultipleSeriesRenderer extends DefaultRenderer {
   
   private boolean xTextLabelShifted = false;
   
+  /** The custom X label drawer. */
+  private LabelDrawer mXLabelDrawer =null;
+  
+
   /**
    * An enum for the XY chart orientation of the X axis.
    */
@@ -1074,6 +1079,15 @@ public class XYMultipleSeriesRenderer extends DefaultRenderer {
 
 public int getWeekColor() {
 	return weekColor;
+}
+
+
+public LabelDrawer getXLabelDrawer() {
+  return mXLabelDrawer;
+}
+
+public void setXLabelDrawer(LabelDrawer xLabelDrawer) {
+  mXLabelDrawer = xLabelDrawer;
 }
 
 public void setWeekColor(int weekColor) {

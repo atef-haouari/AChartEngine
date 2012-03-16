@@ -747,6 +747,9 @@ if (seriesRenderer.isDisplayChart()) {
     }
   }
 
+  
+  
+  
   /**
    * The graphical representation of the text labels on the X axis.
    * 
@@ -759,7 +762,7 @@ if (seriesRenderer.isDisplayChart()) {
    * @param xPixelsPerUnit the amount of pixels per one unit in the chart labels
    * @param minX the minimum value on the X axis in the chart
    * @param maxX the maximum value on the X axis in the chart
-   */
+   */ 
   protected void drawXTextLabels(Double[] xTextLabelLocations, Canvas canvas, Paint paint,
       boolean showLabels, int left, int top, int bottom, double xPixelsPerUnit, double minX,
       double maxX) {
@@ -775,15 +778,27 @@ if (seriesRenderer.isDisplayChart()) {
           paint.setColor(mRenderer.getXLabelsColor());
           canvas.drawLine(xLabel, bottom, xLabel, bottom + mRenderer.getLabelsTextSize() / 3, paint);
           String[] labelLines = mRenderer.getXTextLabel(location).split("\n");
+          // if an xLabelDrawer specified call the draw method for custom labels 
+          if(mRenderer.getXLabelDrawer()!=null){
+            int count= canvas.save();
+            canvas.translate(xLabel, bottom );
+            mRenderer.getXLabelDrawer().draw(canvas, labelLines);
+            canvas.restoreToCount(count);
+          }
+          
           String maxLabelLine = "";
           float yLabelOffset = mRenderer.getLabelsTextSize() * 4 / 3;
           for (int i=0; i < labelLines.length; i++) {
-        	  drawText(canvas, labelLines[i], xLabel, bottom
-                      + yLabelOffset * (i+1), paint, mRenderer.getXLabelsAngle());
-        	  if (labelLines[i].length() > maxLabelLine.length()) {
-        		  maxLabelLine = labelLines[i];
-        	  }
-          }
+           
+              if(mRenderer.getXLabelDrawer()==null){
+                  drawText(canvas, labelLines[i], xLabel, bottom + yLabelOffset * (i+1), paint, mRenderer.getXLabelsAngle());
+              }
+              
+              if (labelLines[i].length() > maxLabelLine.length()) {
+                  maxLabelLine = labelLines[i];
+              }
+              
+         }
           
           /** clickable labels **/
           //getTextBounds buggué sur la taille de chaine comportant des espaces (cf http://code.google.com/p/android/issues/detail?id=7527)
@@ -804,19 +819,19 @@ if (seriesRenderer.isDisplayChart()) {
           int selectableBuffer = mRenderer.getSelectableBuffer();
           //selectableBuffer = 0;
           RectF rectF = new RectF(xLabel - selectableBuffer, bottom + yLabelOffset - selectableBuffer, 
-        		  xLabel + maxLabelWidth + selectableBuffer, bottom + yLabelOffset * labelLines.length + maxLabelHeight * labelLines.length + selectableBuffer);
+                  xLabel + maxLabelWidth + selectableBuffer, bottom + yLabelOffset * labelLines.length + maxLabelHeight * labelLines.length + selectableBuffer);
           
           //Log.d("XTEXT", "xLabel: " + xLabel + " , location: " + location + " (" + getDate(location.longValue()) + ")");
           double clickableLocation = location.doubleValue();
           if (mRenderer.isXTextLabelShifted() && (index + 1 < xTextLabelLocationsLength)) {
-        	  clickableLocation = xTextLabelLocations[index + 1];
+              clickableLocation = xTextLabelLocations[index + 1];
           }
           xTextClickableAreas.add(new ClickableArea(rectF, clickableLocation, -1));
           //canvas.drawRect(rectF, paint); // debug
           /****/
           
           if (showCustomTextGrid) {
-        	  paint.setColor(getColorXLine(location));
+              paint.setColor(getColorXLine(location));
               canvas.drawLine(xLabel, bottom, xLabel, top, paint);
           }
         }
