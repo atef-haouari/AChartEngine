@@ -28,6 +28,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.graphics.RectF;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
@@ -217,7 +218,7 @@ public class TouchHandler implements ITouchHandler {
           float ratioDeltaX = newDeltaX / oldDeltaX;
           float ratioDeltaY = newDeltaY / oldDeltaY;
           // which one is further to 1 ? if so, then zooming on this axis
-          boolean zoomingOnXAxis = Math.abs(1 - ratioDeltaX) < Math.abs(1 - ratioDeltaY);
+          boolean zoomingOnXAxis = Math.abs(1 - ratioDeltaX) > Math.abs(1 - ratioDeltaY);
           float zoomRate = 1;
           if (mRenderer.isZoomStrict()) {
         	  if (zoomingX) {
@@ -236,7 +237,9 @@ public class TouchHandler implements ITouchHandler {
         	  zoomingY = true;
         	  if (zoomingOnXAxis) {
                   zoomRate = newDeltaX / oldDeltaX;
+                  Log.i("zoom rate", "on X");
         	  } else {
+        	    Log.i("zoom rate", "on Y");
         		  zoomRate = newDeltaY / oldDeltaY;
         	  }
           }
